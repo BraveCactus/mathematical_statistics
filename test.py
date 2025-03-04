@@ -41,18 +41,29 @@ def get_dist_function(data):
     data_sorted = np.sort(data)
 
     y_values = np.arange(1, len(data_sorted) + 1) / len(data_sorted)
-
     
     fig, ax = plt.subplots(figsize = (12, 8))
     ax.step(data_sorted, y_values, where='post')   
     plt.show()
+
+def get_histogram(data):
+    data_sorted = np.sort(data)
+
+    frequences = list()
+
+    for i in range(len(data_sorted)):
+        frequences.append(data_sorted/len(data_sorted))
+
+    print(frequences)
 
 
 
 
 exp_selection = exponential_distribution(25, 1)
 
-get_dist_function(exp_selection)
+# get_dist_function(exp_selection)
+
+get_histogram(exp_selection)
 
 # statistics = get_statistics(exp_selection)
 

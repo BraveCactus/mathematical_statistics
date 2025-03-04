@@ -40,4 +40,4 @@ def get_dist_function(data):
     
     fig, ax = plt.subplots(figsize = (12, 8))
     ax.step(data_sorted, y_values, where='post')   
-    plt.show(
+    plt.show()
