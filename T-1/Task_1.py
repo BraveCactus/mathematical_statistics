@@ -5,7 +5,7 @@ import matplotlib as plt
 
 def mode(data):
     #Возвращает наиболее часто встречающееся значение в выборке или -1, если такового нет
-    counter = Counter(data) #коллекция значений с частотами появления (<)
+    counter = Counter(data) #коллекция значений с частотами появления
     most_common = counter.most_common() #Отсортированный по частотам список кортежей (<значение>, <частота>)
     if(most_common[0][1] != most_common[1][1]):
         return most_common[0][0]
@@ -30,15 +30,3 @@ def get_statistics(data):
             'median': data_median,
             'range': data_range,
             'coef_asymmetry': data_coef_asymmetry}
-
-
-
-
-l = 1 #Параметр экспоненциального распределения
-
-exp_selection = np.round(np.random.exponential(l, 25), decimals=3)
-
-statistics = get_statistics(exp_selection)
-
-for key, value in statistics.items():
-    print(f'{key}: {value}')
