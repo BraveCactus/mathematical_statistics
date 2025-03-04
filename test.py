@@ -1,7 +1,12 @@
 import numpy as np
 from scipy import stats
 from collections import Counter
-import matplotlib as plt
+import matplotlib.pyplot as plt
+
+def exponential_distribution(sample_size, parametr = 1):
+    #Генерирует выборку объема sample_size из экспоненциального распределения с параметром parametr
+    exp_selection = np.round(np.random.exponential(parametr, sample_size), decimals=3)
+    return exp_selection
 
 def mode(data):
     #Возвращает наиболее часто встречающееся значение в выборке или -1, если такового нет
@@ -31,14 +36,25 @@ def get_statistics(data):
             'range': data_range,
             'coef_asymmetry': data_coef_asymmetry}
 
+def get_dist_function(data):
+    #Рисует график эмпирической функции распределения
+    data_sorted = np.sort(data)
+
+    y_values = np.arange(1, len(data_sorted) + 1) / len(data_sorted)
+
+    
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.step(data_sorted, y_values, where='post')   
+    plt.show()
 
 
 
-l = 1 #Параметр экспоненциального распределения
 
-exp_selection = np.round(np.random.exponential(l, 25), decimals=3)
+exp_selection = exponential_distribution(25, 1)
 
-statistics = get_statistics(exp_selection)
+get_dist_function(exp_selection)
 
-for key, value in statistics.items():
-    print(f'{key}: {value}')
+# statistics = get_statistics(exp_selection)
+
+# for key, value in statistics.items():
+#     print(f'{key}: {value}')

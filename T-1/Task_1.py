@@ -30,3 +30,14 @@ def get_statistics(data):
             'median': data_median,
             'range': data_range,
             'coef_asymmetry': data_coef_asymmetry}
+
+def get_dist_function(data):
+    #Рисует график эмпирической функции распределения
+    data_sorted = np.sort(data)
+
+    y_values = np.arange(1, len(data_sorted) + 1) / len(data_sorted)
+
+    
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.step(data_sorted, y_values, where='post')   
+    plt.show(
