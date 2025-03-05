@@ -94,6 +94,9 @@ def show_bootstrap_distribution(data, samples_number):
     ax.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
     plt.show()
 
+
+
+
 #Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
 
