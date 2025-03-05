@@ -11,7 +11,7 @@ def exponential_distribution(sample_size, parametr = 1):
 
 def mode(data):
     #Возвращает наиболее часто встречающееся значение в выборке или -1, если такового нет
-    counter = Counter(data) #коллекция значений с частотами появления (<)
+    counter = Counter(data) #коллекция значений с частотами появления
     most_common = counter.most_common() #Отсортированный по частотам список кортежей (<значение>, <частота>)
     if(most_common[0][1] != most_common[1][1]):
         return most_common[0][0]
@@ -51,14 +51,22 @@ def get_histogram(data):
     plt.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
     plt.show() 
 
+def box_plot(data):
+    #Рисует ящик с усами (boxplot)
+    data_sorted = np.sort(data)
+    plt.boxplot(data_sorted, vert = False)
+    plt.show()
+
 
 exp_selection = exponential_distribution(25, 1)
 
 arr = np.array([2, 6, 8, 10, 12, 13, 19, 21, 25, 26])
 
-# get_dist_function(arr)
+get_dist_function(exp_selection)
 
 get_histogram(exp_selection)
+
+box_plot(exp_selection)
 
 statistics = get_statistics(arr)
 

@@ -45,3 +45,10 @@ def get_histogram(data):
 
     plt.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
     plt.show() 
+
+def box_plot(data):
+    #Рисует ящик с усами (boxplot)
+    data_sorted = np.sort(data)
+    plt.boxplot(data_sorted, vert = False)
+    plt.show()
+
