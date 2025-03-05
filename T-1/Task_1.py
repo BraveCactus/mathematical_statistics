@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import stats
 from collections import Counter
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import math
 
 def mode(data):
@@ -18,10 +18,8 @@ def exponential_distribution(sample_size, parametr = 1):
     exp_selection = np.round(np.random.exponential(parametr, sample_size), decimals=3)
     return exp_selection
 
-def get_statistics(data):
+def show_statistics(data):
     #Строит эмпирическую функцию распределения, гистограмму и ящик с усами (boxplot)
-    #Возвращает моду, медиану, размах и коэффициент асимметрии выборки
-
     data_sorted = np.sort(data)
 
     fig, axs = plt.subplots(3, 1, figsize = (6, 10))
@@ -38,6 +36,8 @@ def get_statistics(data):
         
     plt.show()
 
+def get_statistics(data):
+    
     #Мода
     data_mode = mode(data)
 
@@ -97,8 +97,11 @@ def show_bootstrap_distribution(data, samples_number):
 #Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
 
-#Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
+
 #Рисуем графики
+show_statistics(exp_selection)
+
+#Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
 statistics = get_statistics(exp_selection)
 
 #Печаем данные
