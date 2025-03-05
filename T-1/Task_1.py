@@ -2,6 +2,7 @@ import numpy as np
 from scipy import stats
 from collections import Counter
 import matplotlib as plt
+import math
 
 def mode(data):
     #Возвращает наиболее часто встречающееся значение в выборке или -1, если такового нет
@@ -34,10 +35,13 @@ def get_statistics(data):
 def get_dist_function(data):
     #Рисует график эмпирической функции распределения
     data_sorted = np.sort(data)
-
-    y_values = np.arange(1, len(data_sorted) + 1) / len(data_sorted)
-
-    
-    fig, ax = plt.subplots(figsize = (12, 8))
-    ax.step(data_sorted, y_values, where='post')   
+  
+    plt.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
     plt.show()
+
+def get_histogram(data):
+    #Рисует гистаграмму, считаем кол-во отрезков разбиения по ф-ле: 1 + log2(n)
+    data_sorted = np.sort(data)
+
+    plt.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
+    plt.show() 

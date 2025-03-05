@@ -2,6 +2,7 @@ import numpy as np
 from scipy import stats
 from collections import Counter
 import matplotlib.pyplot as plt
+import math
 
 def exponential_distribution(sample_size, parametr = 1):
     #Генерирует выборку объема sample_size из экспоненциального распределения с параметром parametr
@@ -15,7 +16,7 @@ def mode(data):
     if(most_common[0][1] != most_common[1][1]):
         return most_common[0][0]
     else:
-        return -1
+        return "нет моды"
 
 def get_statistics(data):
 
@@ -39,33 +40,27 @@ def get_statistics(data):
 def get_dist_function(data):
     #Рисует график эмпирической функции распределения
     data_sorted = np.sort(data)
-
-    y_values = np.arange(1, len(data_sorted) + 1) / len(data_sorted)
-    
-    fig, ax = plt.subplots(figsize = (12, 8))
-    ax.step(data_sorted, y_values, where='post')   
+  
+    plt.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
     plt.show()
 
 def get_histogram(data):
+    #Рисует гистаграмму, считаем кол-во отрезков разбиения по ф-ле: 1 + log2(n)
     data_sorted = np.sort(data)
 
-    frequences = list()
-
-    for i in range(len(data_sorted)):
-        frequences.append(data_sorted/len(data_sorted))
-
-    print(frequences)
-
-
+    plt.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
+    plt.show() 
 
 
 exp_selection = exponential_distribution(25, 1)
 
-# get_dist_function(exp_selection)
+arr = np.array([2, 6, 8, 10, 12, 13, 19, 21, 25, 26])
+
+# get_dist_function(arr)
 
 get_histogram(exp_selection)
 
-# statistics = get_statistics(exp_selection)
+statistics = get_statistics(arr)
 
-# for key, value in statistics.items():
-#     print(f'{key}: {value}')
+for key, value in statistics.items():
+    print(f'{key}: {value}')
