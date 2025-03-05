@@ -3,6 +3,9 @@ from scipy import stats
 from collections import Counter
 import matplotlib.pyplot as plt
 import math
+import statistics
+from scipy.stats import norm
+
 
 #Task a)
 def mode(data):
@@ -91,14 +94,71 @@ def bootstrap_means(data, samples_number):
 
 def show_bootstrap_distribution(data, samples_number):
     #Рисует гистограмму плотности распределения среднего арифметического элементов выборки
+    #Накладывает плотность распределения полученное с помощью ЦПТ (нормальное распределение)
     bootstrap_means_array = bootstrap_means(data, samples_number)
+    sorted_arr = np.sort(bootstrap_means_array)
+
+    # mean = statistics.mean(sorted_arr)
+    # standard_deviation = statistics.stdev(sorted_arr)
+
+    # x_array = np.linspace(sorted_arr[0], sorted_arr[-1], 50)
+    # y_array = norm.pdf(x_array, mean, standard_deviation)    
 
     fig, ax = plt.subplots(figsize = (12, 8))
     ax.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
+
+    #Перестраиваем гистограмму так, чтобы по оси y были вероятности
+    y_value, bins, patches = plt.hist(bootstrap_means_array, bins=30, alpha=0.5, color='blue')
+    y_new_value = y_value / samples_number #делим на количество подвыборок, чтобы посчитать вероятность
+    plt.clf()
+    plt.bar(bins[:-1], y_new_value, width=np.diff(bins), alpha=0.5, color='blue', align='edge', edgecolor = 'black')
+    plt.title('Плотность распределения среднего арифметического элементов выборки')
+    plt.xlabel('Значения')
+    plt.ylabel('Вероятность')
+    
+    # ax.plot(x_array, y_array, color = 'red', linewidth=2) #НЕ ОТОБРАЖАЕТСЯ!!! ХЗ ПОЧЕМУ
     plt.show()
 
+#Task d)
+def bootstrap_coef_asymmetry(data, samples_number):
+    #Возвращает массив из коэффициентов асимметрии каждой выборки от исходной выборки
+    n = len(data)
+    bootstrap_coef_asymmetry = np.empty(samples_number)
 
+    for i in range(samples_number):
+        sample = np.random.choice(data, size = n, replace = True)
+        bootstrap_coef_asymmetry[i] = round(stats.skew(sample), 3)
 
+    return bootstrap_coef_asymmetry
+
+def show_coef_asymmetry_distribution(data, samples_number):
+    #Рисует гистограмму плотности распределения коэффициентов асимметрии элементов выборки
+    bootstrap_coef_asymmetry_array = bootstrap_coef_asymmetry(data, samples_number)
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.hist(bootstrap_coef_asymmetry_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_coef_asymmetry_array))))
+
+    #Перестраиваем гистограмму так, чтобы по оси y были вероятности
+    y_value, bins, patches = plt.hist(bootstrap_coef_asymmetry_array, bins=30, alpha=0.5, color='blue')
+    y_new_value = y_value / samples_number #делим на количество подвыборок, чтобы посчитать вероятность
+    plt.clf()
+    plt.bar(bins[:-1], y_new_value, width=np.diff(bins), alpha=0.5, color='blue', align='edge', edgecolor = 'black')
+    plt.title('Плотность распределения коэффициента асимметрии элементов выборки')
+    plt.xlabel('Значения')
+    plt.ylabel('Вероятность')
+
+    plt.show()
+
+def probability_coef_assym_less_then_1(data, samples_number):
+    bootstrap_coef_asymmetry_array = bootstrap_coef_asymmetry(data, samples_number)
+    count_less_then_1 = 0
+
+    for i in range(len(bootstrap_coef_asymmetry_array)):
+        if(bootstrap_coef_asymmetry_array[i] < 1):
+            count_less_then_1 += 1
+    
+    probability = round(count_less_then_1 / samples_number, 3)
+
+    return probability
 
 #Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
@@ -107,12 +167,19 @@ exp_selection = exponential_distribution(25, 1)
 #Рисуем графики
 show_statistics(exp_selection)
 
-#Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
+# #Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
 statistics = get_statistics(exp_selection)
 
-#Печаем данные
+# #Печаем данные
 for key, value in statistics.items():
     print(f'{key}: {value}')
 
 #Рисуем гистограмму плотности распределения среднего арифметического элементов выборки
-show_bootstrap_distribution(exp_selection, 100)
+show_bootstrap_distribution(exp_selection, 1000)
+
+print("Вероятность того, что коэф асимметрии меньше 1: ",probability_coef_assym_less_then_1(exp_selection, 1000))
+
+#Рисуем гистограмму п\лотности распределения коэффициента асимметрии элементов выборки
+show_coef_asymmetry_distribution(exp_selection, 1000)
+
+
