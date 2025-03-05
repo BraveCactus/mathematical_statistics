@@ -4,11 +4,6 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import math
 
-def exponential_distribution(sample_size, parametr = 1):
-    #Генерирует выборку объема sample_size из экспоненциального распределения с параметром parametr
-    exp_selection = np.round(np.random.exponential(parametr, sample_size), decimals=3)
-    return exp_selection
-
 def mode(data):
     #Возвращает наиболее часто встречающееся значение в выборке или -1, если такового нет
     counter = Counter(data) #коллекция значений с частотами появления
@@ -18,27 +13,14 @@ def mode(data):
     else:
         return "нет моды"
 
-def get_dist_function(data):
-    #Рисует график эмпирической функции распределения
-    data_sorted = np.sort(data)
-  
-    plt.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
-    plt.show()
-
-def get_histogram(data):
-    #Рисует гистаграмму, считаем кол-во отрезков разбиения по ф-ле: 1 + log2(n)
-    data_sorted = np.sort(data)
-
-    plt.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
-    plt.show() 
-
-def box_plot(data):
-    #Рисует ящик с усами (boxplot)
-    data_sorted = np.sort(data)
-    plt.boxplot(data_sorted, vert = False)
-    plt.show()
+def exponential_distribution(sample_size, parametr = 1):
+    #Генерирует выборку объема sample_size из экспоненциального распределения с параметром parametr
+    exp_selection = np.round(np.random.exponential(parametr, sample_size), decimals=3)
+    return exp_selection
 
 def get_statistics(data):
+    #Строит эмпирическую функцию распределения, гистограмму и ящик с усами (boxplot)
+    #Возвращает моду, медиану, размах и коэффициент асимметрии выборки
 
     data_sorted = np.sort(data)
 
@@ -73,9 +55,48 @@ def get_statistics(data):
             'range': data_range,
             'coef_asymmetry': data_coef_asymmetry}
 
+def get_dist_function(data):
+    #Рисует график эмпирической функции распределения
+    data_sorted = np.sort(data)
+  
+    plt.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
+    plt.show()
+
+def get_histogram(data):
+    #Рисует гистаграмму, считаем кол-во отрезков разбиения по ф-ле: 1 + log2(n)
+    data_sorted = np.sort(data)
+
+    plt.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
+    plt.show() 
+
+def box_plot(data):
+    #Рисует ящик с усами (boxplot)
+    data_sorted = np.sort(data)
+    plt.boxplot(data_sorted, vert = False)
+    plt.show()
+
+def bootstrap_means(data, samples_number):
+    #Возвращает массив из средних значений каждой выборки от исходной выборки
+    n = len(data)
+    bootstrap_means = np.empty(samples_number)
+
+    for i in range(samples_number):
+        sample = np.random.choice(data, size = n, replace = True)
+        bootstrap_means[i] = np.mean(sample)
+
+    return bootstrap_means
+
+def show_bootstrap_distribution(data, samples_number):
+    
+    bootstrap_means_array = bootstrap_means(data, samples_number)
+
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
+    plt.show()
+
+#Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
 
-statistics = get_statistics(exp_selection)
+arr = np.array([1, 4, 1, 1, 2, 3, 7 ,9, 3, 12, 9 ,4, 5 ,6, 52])
 
-for key, value in statistics.items():
-    print(f'{key}: {value}')
+show_bootstrap_distribution(exp_selection, 100)

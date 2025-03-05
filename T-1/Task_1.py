@@ -75,6 +75,24 @@ def box_plot(data):
     plt.boxplot(data_sorted, vert = False)
     plt.show()
 
+def bootstrap_means(data, samples_number):
+    #Возвращает массив из средних значений каждой выборки от исходной выборки
+    n = len(data)
+    bootstrap_means = np.empty(samples_number)
+
+    for i in range(samples_number):
+        sample = np.random.choice(data, size = n, replace = True)
+        bootstrap_means[i] = np.mean(sample)
+
+    return bootstrap_means
+
+def show_bootstrap_distribution(data, samples_number):
+    #Рисует гистограмму плотности распределения среднего арифметического элементов выборки
+    bootstrap_means_array = bootstrap_means(data, samples_number)
+
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
+    plt.show()
 
 #Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
@@ -86,3 +104,6 @@ statistics = get_statistics(exp_selection)
 #Печаем данные
 for key, value in statistics.items():
     print(f'{key}: {value}')
+
+#Рисуем гистограмму плотности распределения среднего арифметического элементов выборки
+show_bootstrap_distribution(exp_selection, 100)
