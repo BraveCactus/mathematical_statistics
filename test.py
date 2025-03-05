@@ -4,6 +4,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import math
 
+#Task a)
 def mode(data):
     #Возвращает наиболее часто встречающееся значение в выборке или -1, если такового нет
     counter = Counter(data) #коллекция значений с частотами появления
@@ -19,25 +20,7 @@ def exponential_distribution(sample_size, parametr = 1):
     return exp_selection
 
 def get_statistics(data):
-    #Строит эмпирическую функцию распределения, гистограмму и ящик с усами (boxplot)
-    #Возвращает моду, медиану, размах и коэффициент асимметрии выборки
-
-    data_sorted = np.sort(data)
-
-    fig, axs = plt.subplots(3, 1, figsize = (6, 10))
-    ax1, ax2, ax3 = axs
-
-    ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
-    ax1.set_title('Эмпирическая функция распределения')   
     
-    ax2.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
-    ax2.set_title('Гистограмма')    
-    
-    ax3.boxplot(data_sorted, vert = False)
-    ax3.set_title('Ящик с усами (boxplot)')
-        
-    plt.show()
-
     #Мода
     data_mode = mode(data)
 
@@ -54,6 +37,25 @@ def get_statistics(data):
             'median': data_median,
             'range': data_range,
             'coef_asymmetry': data_coef_asymmetry}
+
+#Task b)
+def show_statistics(data):
+    #Строит эмпирическую функцию распределения, гистограмму и ящик с усами (boxplot)
+    data_sorted = np.sort(data)
+
+    fig, axs = plt.subplots(3, 1, figsize = (6, 10))
+    ax1, ax2, ax3 = axs
+
+    ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
+    ax1.set_title('Эмпирическая функция распределения')   
+    
+    ax2.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
+    ax2.set_title('Гистограмма')    
+    
+    ax3.boxplot(data_sorted, vert = False)
+    ax3.set_title('Ящик с усами (boxplot)')
+        
+    plt.show()
 
 def get_dist_function(data):
     #Рисует график эмпирической функции распределения
@@ -75,6 +77,7 @@ def box_plot(data):
     plt.boxplot(data_sorted, vert = False)
     plt.show()
 
+#Task c)
 def bootstrap_means(data, samples_number):
     #Возвращает массив из средних значений каждой выборки от исходной выборки
     n = len(data)
@@ -87,16 +90,28 @@ def bootstrap_means(data, samples_number):
     return bootstrap_means
 
 def show_bootstrap_distribution(data, samples_number):
-    
+    #Рисует гистограмму плотности распределения среднего арифметического элементов выборки
     bootstrap_means_array = bootstrap_means(data, samples_number)
 
     fig, ax = plt.subplots(figsize = (12, 8))
     ax.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
     plt.show()
 
+
+
 #Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
 
-arr = np.array([1, 4, 1, 1, 2, 3, 7 ,9, 3, 12, 9 ,4, 5 ,6, 52])
 
+#Рисуем графики
+show_statistics(exp_selection)
+
+#Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
+statistics = get_statistics(exp_selection)
+
+#Печаем данные
+for key, value in statistics.items():
+    print(f'{key}: {value}')
+
+#Рисуем гистограмму плотности распределения среднего арифметического элементов выборки
 show_bootstrap_distribution(exp_selection, 100)
