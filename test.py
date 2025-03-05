@@ -18,25 +18,6 @@ def mode(data):
     else:
         return "нет моды"
 
-def get_statistics(data):
-
-    #Мода
-    data_mode = mode(data)
-
-    #Медиана
-    data_median = np.median(data)
-
-    #Размах
-    data_range = round(max(data) - min(data), 3)
-
-    #Коэффициент асимметрии
-    data_coef_asymmetry = round(stats.skew(data), 3)
-
-    return {'mode': data_mode,
-            'median': data_median,
-            'range': data_range,
-            'coef_asymmetry': data_coef_asymmetry}
-
 def get_dist_function(data):
     #Рисует график эмпирической функции распределения
     data_sorted = np.sort(data)
@@ -57,18 +38,44 @@ def box_plot(data):
     plt.boxplot(data_sorted, vert = False)
     plt.show()
 
+def get_statistics(data):
+
+    data_sorted = np.sort(data)
+
+    fig, axs = plt.subplots(3, 1, figsize = (6, 10))
+    ax1, ax2, ax3 = axs
+
+    ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
+    ax1.set_title('Эмпирическая функция распределения')   
+    
+    ax2.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
+    ax2.set_title('Гистограмма')    
+    
+    ax3.boxplot(data_sorted, vert = False)
+    ax3.set_title('Ящик с усами (boxplot)')
+        
+    plt.show()
+
+    #Мода
+    data_mode = mode(data)
+
+    #Медиана
+    data_median = np.median(data)
+
+    #Размах
+    data_range = round(max(data) - min(data), 3)
+
+    #Коэффициент асимметрии
+    data_coef_asymmetry = round(stats.skew(data), 3)
+
+    return {'mode': data_mode,
+            'median': data_median,
+            'range': data_range,
+            'coef_asymmetry': data_coef_asymmetry}
 
 exp_selection = exponential_distribution(25, 1)
 
-arr = np.array([2, 6, 8, 10, 12, 13, 19, 21, 25, 26])
-
-get_dist_function(exp_selection)
-
-get_histogram(exp_selection)
-
-box_plot(exp_selection)
-
-statistics = get_statistics(arr)
+statistics = get_statistics(exp_selection)
 
 for key, value in statistics.items():
     print(f'{key}: {value}')

@@ -11,9 +11,32 @@ def mode(data):
     if(most_common[0][1] != most_common[1][1]):
         return most_common[0][0]
     else:
-        return -1
+        return "нет моды"
+
+def exponential_distribution(sample_size, parametr = 1):
+    #Генерирует выборку объема sample_size из экспоненциального распределения с параметром parametr
+    exp_selection = np.round(np.random.exponential(parametr, sample_size), decimals=3)
+    return exp_selection
 
 def get_statistics(data):
+    #Строит эмпирическую функцию распределения, гистограмму и ящик с усами (boxplot)
+    #Возвращает моду, медиану, размах и коэффициент асимметрии выборки
+
+    data_sorted = np.sort(data)
+
+    fig, axs = plt.subplots(3, 1, figsize = (6, 10))
+    ax1, ax2, ax3 = axs
+
+    ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
+    ax1.set_title('Эмпирическая функция распределения')   
+    
+    ax2.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
+    ax2.set_title('Гистограмма')    
+    
+    ax3.boxplot(data_sorted, vert = False)
+    ax3.set_title('Ящик с усами (boxplot)')
+        
+    plt.show()
 
     #Мода
     data_mode = mode(data)
@@ -52,3 +75,14 @@ def box_plot(data):
     plt.boxplot(data_sorted, vert = False)
     plt.show()
 
+
+#Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
+exp_selection = exponential_distribution(25, 1)
+
+#Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
+#Рисуем графики
+statistics = get_statistics(exp_selection)
+
+#Печаем данные
+for key, value in statistics.items():
+    print(f'{key}: {value}')
