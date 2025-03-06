@@ -12,8 +12,9 @@ from scipy.stats import norm
 # 3) В пункте c нормальное распределение и гистограмма не накладываюся
 # 4) В пункте d оценить вероятность того, что коэф асимметрии будет меньше 1 done
 # 5) Сделать пункт e
-# 6) Исправить гистограмму и функцию распределения в show_statistics()
+# 6) Исправить гистограмму и функцию распределения в show_statistics() done
 # 7) Оформить в Jupiter Notebook
+# 8) Сделать красивым график функции распределения
 
 
 #Task a)
@@ -56,16 +57,34 @@ def show_statistics(data):
     data_sorted = np.sort(data)
 
     fig, axs = plt.subplots(3, 1, figsize = (6, 10))
-    ax1, ax2, ax3 = axs
+    ax1, ax2, ax3 = axs  
 
-    ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
-    ax1.set_title('Эмпирическая функция распределения')   
+    #Эмпирическая функция распределения
+    counts, bins, patches = ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))    
+
+    new_counts = counts / len(data_sorted)
+
+    ax1.clear()
+    ax1.set_title('Эмпирическая функция распределения')
+    ax1.bar(bins[:-1], new_counts, width=np.diff(bins))     
+
+    #Гистограмма
+    # counts, bins, patches = ax2.hist(data_sorted, color='blue', edgecolor='black', bins=round(1 + math.log2(len(data_sorted))))    
     
-    ax2.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
-    ax2.set_title('Гистограмма')    
+    # new_counts = counts / len(data_sorted)
+
+    # ax2.clear()
     
+    # ax2.bar(bins[:-1], new_counts, width=np.diff(bins), color='blue', edgecolor='black')
+
+    ax2.hist(data_sorted, color='blue', edgecolor='black', bins=round(1 + math.log2(len(data_sorted)))) 
+    ax2.set_title('Гистограмма')
+
+    #Ящик с усами
     ax3.boxplot(data_sorted, vert = False)
     ax3.set_title('Ящик с усами (boxplot)')
+
+    plt.tight_layout() #Для удовлетворения чувства прекрасного
         
     plt.show()
 
@@ -107,25 +126,25 @@ def show_bootstrap_distribution(data, samples_number):
     bootstrap_means_array = bootstrap_means(data, samples_number)
     sorted_arr = np.sort(bootstrap_means_array)
 
-    # mean = statistics.mean(sorted_arr)
-    # standard_deviation = statistics.stdev(sorted_arr)
+    mean = np.mean(sorted_arr)
+    standard_deviation = statistics.stdev(sorted_arr)
 
-    # x_array = np.linspace(sorted_arr[0], sorted_arr[-1], 50)
-    # y_array = norm.pdf(x_array, mean, standard_deviation)    
+    x_array = np.linspace(sorted_arr[0] - 10, sorted_arr[-1] + 10, 100)
+    y_array = norm.pdf(x_array, mean, standard_deviation)    
 
-    fig, ax = plt.subplots(figsize = (12, 8))
-    ax.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
+    
+    # plt.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
 
     #Перестраиваем гистограмму так, чтобы по оси y были вероятности
-    y_value, bins, patches = plt.hist(bootstrap_means_array, bins=30, alpha=0.5, color='blue')
+    y_value, bins, patches = plt.hist(bootstrap_means_array, alpha=0.5, color='blue', edgecolor = 'black',bins = round(1 + math.log2(len(bootstrap_means_array))))
     y_new_value = y_value / samples_number #делим на количество подвыборок, чтобы посчитать вероятность
-    plt.clf()
+    plt.clear()
     plt.bar(bins[:-1], y_new_value, width=np.diff(bins), alpha=0.5, color='blue', align='edge', edgecolor = 'black')
     plt.title('Плотность распределения среднего арифметического элементов выборки')
     plt.xlabel('Значения')
     plt.ylabel('Вероятность')
     
-    # ax.plot(x_array, y_array, color = 'red', linewidth=2) #НЕ ОТОБРАЖАЕТСЯ!!! ХЗ ПОЧЕМУ
+    plt.plot(x_array, y_array, color = 'red', linewidth=2) #НЕ ОТОБРАЖАЕТСЯ!!! ХЗ ПОЧЕМУ
     plt.show()
 
 #Task d)
@@ -174,7 +193,7 @@ exp_selection = exponential_distribution(25, 1)
 
 
 #Рисуем графики
-show_statistics(exp_selection)
+# show_statistics(exp_selection)
 
 # #Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
 statistics = get_statistics(exp_selection)
@@ -189,4 +208,6 @@ show_bootstrap_distribution(exp_selection, 1000)
 print("Вероятность того, что коэф асимметрии меньше 1: ",probability_coef_assym_less_then_1(exp_selection, 1000))
 
 #Рисуем гистограмму п\лотности распределения коэффициента асимметрии элементов выборки
-show_coef_asymmetry_distribution(exp_selection, 1000)
+# show_coef_asymmetry_distribution(exp_selection, 1000)
+
+
