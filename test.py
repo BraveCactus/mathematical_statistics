@@ -8,13 +8,10 @@ from scipy.stats import norm
 
 # Что еще нужно сделать
 # 1) Проблема плохой вывод нескольких графиков
-# 2) Подписать оси для гистограмм done
-# 3) В пункте c нормальное распределение и гистограмма не накладываюся
-# 4) В пункте d оценить вероятность того, что коэф асимметрии будет меньше 1 done
-# 5) Сделать пункт e
-# 6) Исправить гистограмму и функцию распределения в show_statistics() done
-# 7) Оформить в Jupiter Notebook
-# 8) Сделать красивым график функции распределения
+# 2) В пункте c нормальное распределение и гистограмма не накладываюся
+# 3) Оформить в Jupiter Notebook
+# 4) Сделать красивым график функции распределения
+# 5) Для пунктов с и е добавить нормальное распределение
 
 
 #Task a)
@@ -126,11 +123,11 @@ def show_bootstrap_distribution(data, samples_number):
     bootstrap_means_array = bootstrap_means(data, samples_number)
     sorted_arr = np.sort(bootstrap_means_array)
 
-    mean = np.mean(sorted_arr)
-    standard_deviation = statistics.stdev(sorted_arr)
+    # mean = np.mean(sorted_arr)
+    # standard_deviation = statistics.stdev(sorted_arr)
 
-    x_array = np.linspace(sorted_arr[0] - 10, sorted_arr[-1] + 10, 100)
-    y_array = norm.pdf(x_array, mean, standard_deviation)    
+    # x_array = np.linspace(sorted_arr[0] - 10, sorted_arr[-1] + 10, 100)
+    # y_array = norm.pdf(x_array, mean, standard_deviation)    
 
     
     # plt.hist(bootstrap_means_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_means_array))))
@@ -144,7 +141,7 @@ def show_bootstrap_distribution(data, samples_number):
     plt.xlabel('Значения')
     plt.ylabel('Вероятность')
     
-    plt.plot(x_array, y_array, color = 'red', linewidth=2) #НЕ ОТОБРАЖАЕТСЯ!!! ХЗ ПОЧЕМУ
+    # plt.plot(x_array, y_array, color = 'red', linewidth=2) #НЕ ОТОБРАЖАЕТСЯ!!! ХЗ ПОЧЕМУ
     plt.show()
 
 #Task d)
@@ -188,12 +185,43 @@ def probability_coef_assym_less_then_1(data, samples_number):
 
     return probability
 
+#Task e)
+def bootstrap_median(data, samples_number):
+    #Возвращает массив из медиан каждой выборки от исходной выборки
+    n = len(data)
+    bootstrap_means = np.empty(samples_number)
+
+    for i in range(samples_number):
+        sample = np.random.choice(data, size = n, replace = True)
+        bootstrap_means[i] = np.median(sample)
+
+    return bootstrap_means
+
+def show_median_distribution(data, samples_number): 
+    #Рисует гистограмму плотности распределения медиан элементов выборки
+    bootstrap_median_array = bootstrap_median(data, samples_number)
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.hist(bootstrap_median_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_median_array))))
+
+    #Перестраиваем гистограмму так, чтобы по оси y были вероятности
+    y_value, bins, patches = plt.hist(bootstrap_median_array, bins=round(1 + math.log2(len(bootstrap_median_array))), alpha=0.5, color='blue', edgecolor = 'black')
+    y_new_value = y_value / samples_number #делим на количество подвыборок, чтобы посчитать вероятность
+    plt.clf()
+    plt.bar(bins[:-1], y_new_value, width=np.diff(bins), alpha=0.5, color='blue', align='edge', edgecolor = 'black')
+    plt.title('Плотность распределения медиан элементов выборки')
+    plt.xlabel('Значения')
+    plt.ylabel('Вероятность')
+
+    plt.show()
+
+
+
 #Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
 
 
 #Рисуем графики
-# show_statistics(exp_selection)
+show_statistics(exp_selection)
 
 # #Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
 statistics = get_statistics(exp_selection)
@@ -207,7 +235,10 @@ show_bootstrap_distribution(exp_selection, 1000)
 
 print("Вероятность того, что коэф асимметрии меньше 1: ",probability_coef_assym_less_then_1(exp_selection, 1000))
 
-#Рисуем гистограмму п\лотности распределения коэффициента асимметрии элементов выборки
-# show_coef_asymmetry_distribution(exp_selection, 1000)
+#Рисуем гистограмму плотности распределения коэффициента асимметрии элементов выборки
+show_coef_asymmetry_distribution(exp_selection, 1000)
+
+#Рисуем гистограмму плотности распределения медиан элементов выборки
+show_median_distribution(exp_selection, 100)
 
 

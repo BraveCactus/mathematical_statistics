@@ -178,14 +178,44 @@ def probability_coef_assym_less_then_1(data, samples_number):
 
     return probability
 
-#Генерируем выборку из экспоненциального закона распределения, с параметром лямбда = 1
-exp_selection = exponential_distribution(25, 1)
+#Task e)
+def bootstrap_median(data, samples_number):
+    #Возвращает массив из медиан каждой выборки от исходной выборки
+    n = len(data)
+    bootstrap_means = np.empty(samples_number)
 
+    for i in range(samples_number):
+        sample = np.random.choice(data, size = n, replace = True)
+        bootstrap_means[i] = np.median(sample)
+
+    return bootstrap_means
+
+def show_median_distribution(data, samples_number): 
+    #Рисует гистограмму плотности распределения медиан элементов выборки
+    bootstrap_median_array = bootstrap_median(data, samples_number)
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.hist(bootstrap_median_array, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(bootstrap_median_array))))
+
+    #Перестраиваем гистограмму так, чтобы по оси y были вероятности
+    y_value, bins, patches = plt.hist(bootstrap_median_array, bins=round(1 + math.log2(len(bootstrap_median_array))), alpha=0.5, color='blue', edgecolor = 'black')
+    y_new_value = y_value / samples_number #делим на количество подвыборок, чтобы посчитать вероятность
+    plt.clf()
+    plt.bar(bins[:-1], y_new_value, width=np.diff(bins), alpha=0.5, color='blue', align='edge', edgecolor = 'black')
+    plt.title('Плотность распределения медиан элементов выборки')
+    plt.xlabel('Значения')
+    plt.ylabel('Вероятность')
+
+    plt.show()
+
+
+
+#Генерируем выборку объемом 25 из экспоненциального закона распределения, с параметром лямбда = 1
+exp_selection = exponential_distribution(25, 1)
 
 #Рисуем графики
 show_statistics(exp_selection)
 
-# #Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
+#Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
 statistics = get_statistics(exp_selection)
 
 # #Печаем данные
@@ -200,4 +230,6 @@ print("Вероятность того, что коэф асимметрии м�
 #Рисуем гистограмму п\лотности распределения коэффициента асимметрии элементов выборки
 show_coef_asymmetry_distribution(exp_selection, 1000)
 
+#Рисуем гистограмму плотности распределения медиан элементов выборки
+show_median_distribution(exp_selection, 1000)
 
