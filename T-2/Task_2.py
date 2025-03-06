@@ -47,16 +47,34 @@ def show_statistics(data):
     data_sorted = np.sort(data)
 
     fig, axs = plt.subplots(3, 1, figsize = (6, 10))
-    ax1, ax2, ax3 = axs
+    ax1, ax2, ax3 = axs  
 
-    ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
-    ax1.set_title('Эмпирическая функция распределения')   
+    #Эмпирическая функция распределения
+    counts, bins, patches = ax1.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))    
+
+    new_counts = counts / len(data_sorted)
+
+    ax1.clear()
+    ax1.set_title('Эмпирическая функция распределения')
+    ax1.bar(bins[:-1], new_counts, width=np.diff(bins))     
+
+    #Гистограмма
+    # counts, bins, patches = ax2.hist(data_sorted, color='blue', edgecolor='black', bins=round(1 + math.log2(len(data_sorted))))    
     
-    ax2.hist(data_sorted, color = 'blue', edgecolor = 'black', bins = round(1 + math.log2(len(data_sorted))))
-    ax2.set_title('Гистограмма')    
+    # new_counts = counts / len(data_sorted)
+
+    # ax2.clear()
     
+    # ax2.bar(bins[:-1], new_counts, width=np.diff(bins), color='blue', edgecolor='black')
+
+    ax2.hist(data_sorted, color='blue', edgecolor='black', bins=round(1 + math.log2(len(data_sorted)))) 
+    ax2.set_title('Гистограмма')
+
+    #Ящик с усами
     ax3.boxplot(data_sorted, vert = False)
     ax3.set_title('Ящик с усами (boxplot)')
+
+    plt.tight_layout() #Для удовлетворения чувства прекрасного
         
     plt.show()
 
