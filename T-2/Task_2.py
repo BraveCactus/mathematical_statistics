@@ -81,7 +81,7 @@ def show_statistics(data):
 def get_dist_function(data):
     #Рисует график эмпирической функции распределения
     data_sorted = np.sort(data)
-  
+    
     plt.hist(data_sorted, histtype='step', cumulative=True, bins=len(data_sorted))
     plt.show()
 
@@ -207,13 +207,8 @@ def show_median_distribution(data, samples_number):
 
     plt.show()
 
-
-
 #Генерируем выборку объемом 25 из экспоненциального закона распределения, с параметром лямбда = 1
 exp_selection = exponential_distribution(25, 1)
-
-#Рисуем графики
-show_statistics(exp_selection)
 
 #Получаем характеристики, описывающие выборку (моду, медиану, размах и коэффициент асимметрии выборки)
 statistics = get_statistics(exp_selection)
@@ -221,6 +216,12 @@ statistics = get_statistics(exp_selection)
 # #Печаем данные
 for key, value in statistics.items():
     print(f'{key}: {value}')
+
+
+
+
+#Рисуем графики
+show_statistics(exp_selection)
 
 #Рисуем гистограмму плотности распределения среднего арифметического элементов выборки
 show_bootstrap_distribution(exp_selection, 1000)
