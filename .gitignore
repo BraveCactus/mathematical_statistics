@@ -75,8 +75,7 @@ compile_commands.json
 # QtCreator local machine specific files for imported projects
 *creator.user*
 
-# Files
-test.py
-test2.py
-
 *.pptx
+
+# Folders
+test\
